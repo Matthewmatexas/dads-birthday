@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" type="image/png" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gimtadienis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta&display=swap" rel="stylesheet">
+</head>
+<body onload="loadFunction()">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Mukta', sans-serif;
+            transition: 0.3s;
+        }
+        #load{
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            position: fixed;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: slategrey;
+            z-index: 50;
+        }
+        .loader {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            background: linear-gradient(0deg, lightgrey 33%, slategrey 100%);
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+        .loader::after {
+            content: '';  
+            box-sizing: border-box;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: white;
+        }
+        @keyframes rotation {
+            0% { transform: rotate(0deg) scale(2) }
+            100% { transform: rotate(360deg) scale(2)}
+        } 
+        #complete{
+            width: 96px;
+            height: 96px;
+            border: 4px solid slategrey;
+            border-radius: 100%;
+            position: absolute;
+            opacity: 0;
+        }
+        @keyframes tortas1{
+            0%{
+                opacity: 0.1;
+                color: pink;
+            }
+            10%{
+                opacity: 0.1;
+                color: turquoise;
+            }
+            20%{
+                opacity: 0.1;
+                color: tomato;
+            }
+            30%{
+                opacity: 0.1;
+                color: deepskyblue;
+            }
+            40%{
+                opacity: 0.1;
+                color: goldenrod;
+            }
+            50%{
+                opacity: 0;
+                color: goldenrod;
+            }
+            90%{
+                opacity: 0;
+                color: pink;
+            }
+            100%{
+                opacity: 0.1;
+                color: pink;
+            }
+        }
+        @keyframes tortas2{
+            0%{
+                opacity: 0;
+                color: pink;
+            }
+            40%{
+                opacity: 0;
+                color: pink;
+            }
+            50%{
+                opacity: 0.1;
+                color: pink;
+            }
+            60%{
+                opacity: 0.1;
+                color: turquoise;
+            }
+            70%{
+                opacity: 0.1;
+                color: tomato;
+            }
+            80%{
+                opacity: 0.1;
+                color: deepskyblue;
+            }
+            90%{
+                opacity: 0.1;
+                color: goldenrod;
+            }
+            100%{
+                opacity: 0;
+                color: goldenrod;
+            }
+        }
+        #questionBackground{
+            width: 95%;
+            height: 305px;
+            position: absolute;
+            top: 65px;
+            left: 2.5%;
+            right: 2.5%;
+            background-color: lightgrey;
+            border-radius: 25px;
+            opacity: 0;
+        }
+        button{
+            position: absolute;
+            z-index: 30;
+            border-radius: 25px;
+            border: none;
+            background-color: grey;
+            color: white;
+            width: 90%;
+            height: 40px;
+            font-size: 25px;
+            left: 5%;
+            top: 118px;
+            opacity: 0;
+        }
+        #wrong{
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            position: fixed;
+            background-color: white;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: black;
+            z-index: 50;
+            opacity: 0;
+        }
+        #correct{
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            position: fixed;
+            background-color: white;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: black;
+            z-index: 50;
+            opacity: 0;
+        }
+    </style>
+    <div id="load">
+        <span class="loader"></span>
+        <i class="fa-solid fa-check" style="position: absolute; font-size: 40px; opacity: 0;" id="ok"></i>
+        <div id="complete"></div>
+    </div>
+    <div id="wrong">
+        <p style="font-size: 30px;">Deja, suklydai <i class="fa-regular fa-face-sad-tear" style="color: red;"></i></p>
+        <p style="font-size: 20px; margin-top: 15px;">Bandyk dar kartą po 1 minutės</p>
+    </div>
+    <div id="correct">
+        <p style="font-size: 30px;">Atsakei teisingai <i class="fa-regular fa-face-smile" style="color: green;"></i></p>
+        <p style="font-size: 20px; margin-top: 15px; text-align: center;">Kitą QR kodą rasi virtuvėje<span style="display: none;" id="more"> šaldytuve</span>.</p>
+        <p style="font-size: 20px; text-decoration: underline;" onclick="tiksliau()" id="tikslesneInfo">Tikslesnė informacija</p>
+    </div>
+    <i class="fa-solid fa-cake-candles" style="position: fixed; font-size: 300px; opacity: 0.1; bottom: 25px; left: 25px; animation: tortas1 7.5s linear infinite; z-index: -1;"></i>
+    <i class="fa-solid fa-cake-candles" style="position: fixed; font-size: 300px; opacity: 0.1; bottom: 25px; right: 25px; animation: tortas2 7.5s linear infinite; z-index: -1;"></i>
+    <p style="font-size: 20px; text-align: center; margin-top: 15px; opacity: 0;" id="hide1">Atsakyk į klausimą ir keliauk toliau!</p>
+    <p style="font-size: 20px; text-align: center; color: darkslategrey; position: absolute; top: 75px; z-index: 2; width: 100%; opacity: 0; padding-left: 10px; padding-right: 10px;" id="hide2">Kas pirmieji pradėjo švęsti gimtadienius?</p>
+    <button style="background-color: pink;" onclick="function1()" id="hide3">Romėnai</button>
+    <button style="background-color: turquoise; top: 168px;" onclick="function2()" id="hide4">Graikai</button>
+    <button style="background-color: tomato; top: 218px;" onclick="function5()" id="hide5">Egiptiečiai</button>
+    <button style="background-color: deepskyblue; top: 268px;" onclick="function3()" id="hide6">Bizantiečiai</button>
+    <button style="background-color: goldenrod; top: 318px;" onclick="function4()" id="hide7">Amerikiečiai</button>
+    <div id="questionBackground"></div>
+    <script src="https://kit.fontawesome.com/a11707644f.js" crossorigin="anonymous"></script>
+    <script>
+        function loadFunction() {
+            setTimeout(() => {
+                document.getElementById("ok").style.opacity = "1";
+                document.getElementById("complete").style.opacity = "1";
+            }, 3000);
+            setTimeout(() => {
+                document.getElementById("load").style.opacity = "0";
+            }, 4000);
+            setTimeout(() => {
+                document.getElementById("hide1").style.opacity = "1";
+                document.getElementById("load").style.display = "none";
+            }, 5000);
+            setTimeout(() => {
+                document.getElementById("questionBackground").style.opacity = "0.3";
+            }, 5300);
+            setTimeout(() => {
+                document.getElementById("hide2").style.opacity = "1";
+            }, 5600);
+            setTimeout(() => {
+                document.getElementById("hide3").style.opacity = "1";
+            }, 6600);
+            setTimeout(() => {
+                document.getElementById("hide4").style.opacity = "1";
+            }, 6900);
+            setTimeout(() => {
+                document.getElementById("hide5").style.opacity = "1";
+            }, 7200);
+            setTimeout(() => {
+                document.getElementById("hide6").style.opacity = "1";
+            }, 7500);
+            setTimeout(() => {
+                document.getElementById("hide7").style.opacity = "1";
+            }, 7800);
+        }
+        function function1() {
+            document.getElementById("hide3").style.opacity = "0";
+            document.getElementById("wrong").style.display = "flex";
+            setTimeout(() => {
+                document.getElementById("hide3").style.opacity = "1";
+                document.getElementById("wrong").style.opacity = "0.9";
+            }, 300);
+            setTimeout(() => {
+                document.getElementById("wrong").style.opacity = "0";
+            }, 60300);
+            setTimeout(() => {
+                document.getElementById("wrong").style.display = "none";
+            }, 60600);
+        }
+        function function2() {
+            document.getElementById("hide4").style.opacity = "0";
+            document.getElementById("wrong").style.display = "flex";
+            setTimeout(() => {
+                document.getElementById("hide4").style.opacity = "1";
+                document.getElementById("wrong").style.opacity = "0.9";
+            }, 300);
+            setTimeout(() => {
+                document.getElementById("wrong").style.opacity = "0";
+            }, 60300);
+            setTimeout(() => {
+                document.getElementById("wrong").style.display = "none";
+            }, 60600);
+        }
+        function function3() {
+            document.getElementById("hide6").style.opacity = "0";
+            document.getElementById("wrong").style.display = "flex";
+            setTimeout(() => {
+                document.getElementById("hide6").style.opacity = "1";
+                document.getElementById("wrong").style.opacity = "0.9";
+            }, 300);
+            setTimeout(() => {
+                document.getElementById("wrong").style.opacity = "0";
+            }, 60300);
+            setTimeout(() => {
+                document.getElementById("wrong").style.display = "none";
+            }, 60600);
+        }
+        function function4() {
+            document.getElementById("hide7").style.opacity = "0";
+            document.getElementById("wrong").style.display = "flex";
+            setTimeout(() => {
+                document.getElementById("hide7").style.opacity = "1";
+                document.getElementById("wrong").style.opacity = "0.9";
+            }, 300);
+            setTimeout(() => {
+                document.getElementById("wrong").style.opacity = "0";
+            }, 60300);
+            setTimeout(() => {
+                document.getElementById("wrong").style.display = "none";
+            }, 60600);
+        }
+        function function5() {
+            document.getElementById("hide5").style.opacity = "0";
+            document.getElementById("correct").style.display = "flex";
+            setTimeout(() => {
+                document.getElementById("hide5").style.opacity = "1";
+                document.getElementById("correct").style.opacity = "0.9";
+            }, 300);
+        }
+        function tiksliau() {
+            document.getElementById("tikslesneInfo").style.opacity = "0";
+            document.getElementById("tikslesneInfo").style.pointerEvents = "none";
+            document.getElementById("more").style.display = "inline";
+        }
+    </script>
+</body>
+</html>
